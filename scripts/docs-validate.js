@@ -1,12 +1,5 @@
 #!/usr/bin/env node
-const { execSync } = require('child_process');
-const path = require('path');
-
-// Allow bypassing validation via env var (useful in CI or when intentionally skipping)
-if (process.env.SKIP_DOCS_VALIDATE === '1') {
-  console.log('docs-validate: skipping because SKIP_DOCS_VALIDATE=1');
-  process.exit(0);
-}
+import { execSync } from 'child_process';
 
 function getStagedFiles() {
   try {
