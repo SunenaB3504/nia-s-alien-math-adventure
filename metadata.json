@@ -1,0 +1,7 @@
+{
+  "name": "Nia's Alien Math Adventure",
+  "description": "A fun 3D game where Nia teams up with a friendly Alien to solve math problems. The Alien asks the questions, and Nia dances her way through the answers in this cosmic learning adventure.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
