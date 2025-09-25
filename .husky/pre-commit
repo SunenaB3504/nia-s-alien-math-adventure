@@ -1,0 +1,11 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running docs validation..."
+node ./scripts/docs-validate.js || exit 1
+
+# Run lint and tests here (adjust commands as needed)
+# npm run lint || exit 1
+# npm test || exit 1
+
+echo "Pre-commit checks passed."

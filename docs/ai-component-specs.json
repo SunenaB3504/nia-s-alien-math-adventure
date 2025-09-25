@@ -1,0 +1,36 @@
+{
+  "components": [
+    {
+      "name": "GameUI",
+      "props": [
+        { "name": "problem", "type": "Problem" },
+        { "name": "onAnswer", "type": "(answer: number) => void" },
+        { "name": "feedback", "type": "boolean | null" },
+        { "name": "points", "type": "number" },
+        { "name": "streak", "type": "number" },
+        { "name": "isNiaResponding", "type": "boolean" },
+        { "name": "isNiaInitiatingTalk", "type": "boolean" },
+        { "name": "onNiaTalk", "type": "() => void" },
+        { "name": "isMuted", "type": "boolean" },
+        { "name": "toggleMute", "type": "() => void" },
+        { "name": "onNavigate", "type": "(stage: GameStage) => void" }
+      ]
+    },
+    {
+      "name": "GameCanvas",
+      "props": [
+        { "name": "problem", "type": "Problem" },
+        { "name": "feedback", "type": "boolean | null" },
+        { "name": "activeDialogue", "type": "{ speaker: 'Alien'; text: string } | null" }
+      ]
+    },
+    {
+      "name": "RewardsUI",
+      "props": [
+        { "name": "points", "type": "number" },
+        { "name": "onRedeem", "type": "(rewardId: string, cost: number) => void" },
+        { "name": "onClose", "type": "() => void" }
+      ]
+    }
+  ]
+}

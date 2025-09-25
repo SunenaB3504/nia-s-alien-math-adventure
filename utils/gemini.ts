@@ -65,31 +65,35 @@ You are very knowledgeable but also very kind.
 
 export async function getAlienResponse(prompt: string, personality: 'curious' | 'teacher' = 'curious'): Promise<string> {
     try {
-        const aiInstance = getAiInstance();
-        
-        if (!aiInstance) {
-            console.error("Gemini AI client could not be initialized. This is likely due to a missing API_KEY in the deployment environment.");
-            return "My universal translator is offline at the moment. Let's talk later!";
+        // Prefer server-side proxy endpoint for AI calls. This keeps API keys off the client.
+        // In dev, Vite proxies /api to the server we run locally (see vite.config.ts).
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        // If a server client key is configured for development security, include it.
+        try {
+            // @ts-ignore - import.meta may be untyped in some environments
+            const clientKey = (import.meta && (import.meta as any).env && (import.meta as any).env.VITE_SERVER_CLIENT_KEY) || undefined;
+            if (clientKey) headers['x-server-client-key'] = clientKey;
+        } catch (e) {
+            // ignore import.meta access errors in non-Vite environments
         }
-        
-        const systemInstruction = personality === 'teacher' 
-            ? teacherAlienSystemInstruction 
-            : curiousAlienSystemInstruction;
-
-        const response = await aiInstance.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                systemInstruction: systemInstruction,
-            }
+        const resp = await fetch('/api/generate', {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ prompt, personality }),
         });
-        // Clean up any stray markdown just in case
-        const txt = (response as any)?.text ?? (response as any)?.content ?? '';
-        console.debug("Gemini response (trimmed):", String(txt).slice(0, 200));
+
+        if (!resp.ok) {
+            console.error('AI proxy returned error', resp.status, await resp.text());
+            return "My universal translator seems to be offline at the moment. Let's talk later!";
+        }
+
+        const data = await resp.json();
+        const txt = data?.text ?? '';
+        console.debug('AI proxy response (trimmed):', String(txt).slice(0, 200));
         return String(txt).replace(/\*/g, '');
 
-    } catch (error) {
-        console.error("Error getting response from Gemini.", error);
-        return "My translator seems to be malfunctioning! That is very curious.";
-    }
+     } catch (error) {
+         console.error("Error getting response from Gemini.", error);
+         return "My translator seems to be malfunctioning! That is very curious.";
+     }
 }

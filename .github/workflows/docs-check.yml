@@ -1,0 +1,29 @@
+name: Docs Check
+
+on:
+  pull_request:
+    paths:
+      - 'components/**'
+      - 'server/**'
+      - 'utils/**'
+      - 'hooks/**'
+      - 'App.tsx'
+      - 'docs/**'
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 18
+      - name: Install
+        run: npm ci
+      - name: Run docs-validate
+        run: node ./scripts/docs-validate.js origin/main HEAD
+      - name: Check component specs
+        run: npm run check:component-specs origin/main HEAD
+      - name: Lint design tokens
+        run: npm run lint:design-tokens
