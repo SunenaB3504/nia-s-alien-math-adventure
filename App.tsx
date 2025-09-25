@@ -247,7 +247,7 @@ export default function App() {
       case GameStage.PLAYING:
         if (!currentProblem) return <div className="text-center text-xl p-8">Loading your next challenge...</div>;
         return (
-          <div className="relative w-full h-screen">
+          <div className="relative w-full min-h-screen flex flex-col">
             <GameCanvas problem={currentProblem} feedback={feedback} activeDialogue={activeDialogue} isNiaResponding={isNiaResponding} />
             <GameUI
               problem={currentProblem}
@@ -270,7 +270,7 @@ export default function App() {
   };
 
   return (
-    <main className="w-full h-screen overflow-hidden bg-cyan-50">
+    <main className="w-full min-h-screen overflow-x-hidden bg-cyan-50">
       {renderContent()}
     </main>
   );
