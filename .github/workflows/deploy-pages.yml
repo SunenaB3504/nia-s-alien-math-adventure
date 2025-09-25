@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
@@ -26,12 +29,18 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build
+        env:
+          VITE_SERVER_URL: ${{ secrets.VITE_SERVER_URL }}
+          VITE_SERVER_CLIENT_KEY: ${{ secrets.VITE_SERVER_CLIENT_KEY }}
+        run: |
+          echo "Building with VITE_SERVER_URL=${VITE_SERVER_URL}" && npm run build
 
       - name: Upload production artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: ./dist
+      - name: Print pages URL
+        run: echo "Pages artifact uploaded. After deploy, check Settings → Pages or the workflow run summary for the public URL."
 
   deploy:
     needs: build-and-deploy

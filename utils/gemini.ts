@@ -71,16 +71,30 @@ export async function getAlienResponse(prompt: string, personality: 'curious' | 
         // If a server client key is configured for development security, include it.
         try {
             // @ts-ignore - import.meta may be untyped in some environments
-            const clientKey = (import.meta && (import.meta as any).env && (import.meta as any).env.VITE_SERVER_CLIENT_KEY) || undefined;
+            const env = (import.meta && (import.meta as any).env) || {};
+            const clientKey = env.VITE_SERVER_CLIENT_KEY || undefined;
             if (clientKey) headers['x-server-client-key'] = clientKey;
         } catch (e) {
             // ignore import.meta access errors in non-Vite environments
         }
-        const resp = await fetch('/api/generate', {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ prompt, personality }),
-        });
+        // Determine endpoint: use VITE_SERVER_URL if provided (production), otherwise use relative path for dev proxy
+        let endpoint = '/api/generate';
+        try {
+            // @ts-ignore
+            const env = (import.meta && (import.meta as any).env) || {};
+            if (env.VITE_SERVER_URL) {
+                const base = String(env.VITE_SERVER_URL).replace(/\/$/, '');
+                endpoint = base + '/api/generate';
+            }
+        } catch (e) {
+            // ignore
+        }
+
+        const resp = await fetch(endpoint, {
+             method: 'POST',
+             headers,
+             body: JSON.stringify({ prompt, personality }),
+         });
 
         if (!resp.ok) {
             console.error('AI proxy returned error', resp.status, await resp.text());
