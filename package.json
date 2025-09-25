@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "./",
   "scripts": {
     "prepare": "husky install",
     "docs:validate": "node ./scripts/docs-validate.js",
@@ -10,6 +11,7 @@
     "lint:design-tokens": "node ./scripts/lint-design-tokens.js || true",
     "dev": "vite",
     "build": "vite build",
+    "postbuild": "echo postbuild - adjust base if necessary",
     "preview": "vite preview"
   },
   "dependencies": {
